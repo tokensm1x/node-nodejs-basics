@@ -1,4 +1,5 @@
-import { stat, copyFile, readdir, mkdir } from "fs/promises";
+import { copyFile, readdir, mkdir } from "fs/promises";
+import { existsSync } from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -8,41 +9,19 @@ const filesPath = path.join(__dirname, "files");
 const copiedFilesPath = path.join(__dirname, "files_copy");
 
 const copy = async () => {
-    let isMainFolderExists = false;
-    let isCopiedFolderExists = false;
-
-    await stat(filesPath)
-        .then(() => {
-            isMainFolderExists = true;
-        })
-        .catch(() => {
-            isMainFolderExists = false;
-        });
-
-    if (isMainFolderExists) {
-        await stat(copiedFilesPath)
-            .then(() => {
-                isCopiedFolderExists = true;
-            })
-            .catch(() => {
-                isCopiedFolderExists = false;
+    try {
+        if (existsSync(filesPath) && !existsSync(copiedFilesPath)) {
+            const files = await readdir(filesPath);
+            await mkdir(copiedFilesPath);
+            files.forEach((el) => {
+                const filePath = path.join(filesPath, el);
+                const fileCopiedPath = path.join(copiedFilesPath, el);
+                copyFile(filePath, fileCopiedPath);
             });
-        if (isCopiedFolderExists) {
-            throw new Error("FS operation failed!");
         } else {
-            try {
-                const files = await readdir(filesPath);
-                await mkdir(copiedFilesPath);
-                files.forEach((el) => {
-                    const filePath = path.join(filesPath, el);
-                    const fileCopiedPath = path.join(copiedFilesPath, el);
-                    copyFile(filePath, fileCopiedPath);
-                });
-            } catch (e) {
-                throw new Error("FS operation failed!");
-            }
+            throw new Error("FS operation failed!");
         }
-    } else {
+    } catch (e) {
         throw new Error("FS operation failed!");
     }
 };
