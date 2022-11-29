@@ -3,7 +3,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
-const filePath = path.dirname(__filename) + "/files/fresh.txt";
+const __dirname = path.dirname(__filename);
+const filePath = path.join(__dirname, "/files/fresh.txt");
 const text = "I am fresh and young";
 
 const create = async () => {
