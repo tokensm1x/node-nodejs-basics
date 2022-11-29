@@ -22,10 +22,10 @@ const create = async () => {
                 console.log("File created!");
             })
             .catch(() => {
-                throw new Error("Can't create file!");
+                throw new Error("FS operation failed!");
             });
     } else {
-        throw new Error("File exists!");
+        throw new Error("FS operation failed!");
     }
 };
 
