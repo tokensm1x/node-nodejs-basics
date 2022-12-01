@@ -12,7 +12,7 @@ const write = async () => {
         process.stdin.on("data", (data) => {
             writeStream.write(data);
         });
-        readStream.on("error", (err) => {
+        writeStream.on("error", (err) => {
             throw new Error("Filed to write file!");
         });
     } catch (e) {
