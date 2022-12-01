@@ -21,7 +21,7 @@ const performCalculations = async () => {
                 });
 
                 worker.on("error", (error) => {
-                    resolve({ status: "error", data: null });
+                    reject({ status: "error", data: null });
                 });
             });
         };
@@ -29,7 +29,8 @@ const performCalculations = async () => {
             workerPromises.push(createWorker(num++));
         });
 
-        const result = await Promise.all(workerPromises);
+        const workersResult = await Promise.allSettled(workerPromises);
+        const result = workersResult.map((el) => el.reason || el.value);
         console.log(result);
     } catch (e) {
         throw new Error(e);
