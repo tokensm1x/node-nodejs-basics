@@ -1,5 +1,4 @@
-import { rename as renameFile } from "fs/promises";
-import { existsSync } from "fs";
+import { rename as renameFile, stat } from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -10,13 +9,19 @@ const newFilePath = path.join(__dirname, "/files/properFilename.md");
 
 const rename = async () => {
     try {
-        if (existsSync(filePath) && !existsSync(newFilePath)) {
+        const existPath = await stat(filePath)
+            .then(() => true)
+            .catch(() => false);
+        const existPathRenamed = await stat(newFilePath)
+            .then(() => true)
+            .catch(() => false);
+        if (existPath && !existPathRenamed) {
             renameFile(filePath, newFilePath);
         } else {
             throw new Error("FS operation failed!");
         }
     } catch (e) {
-        throw new Error("FS operation failed!");
+        throw new Error(e);
     }
 };
 

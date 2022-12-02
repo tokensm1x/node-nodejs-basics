@@ -1,5 +1,4 @@
-import { copyFile, readdir, mkdir } from "fs/promises";
-import { existsSync } from "fs";
+import { copyFile, readdir, mkdir, stat } from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -10,7 +9,13 @@ const copiedFilesPath = path.join(__dirname, "files_copy");
 
 const copy = async () => {
     try {
-        if (existsSync(filesPath) && !existsSync(copiedFilesPath)) {
+        const existPath = await stat(filesPath)
+            .then(() => true)
+            .catch(() => false);
+        const existCopiedPath = await stat(copiedFilesPath)
+            .then(() => true)
+            .catch(() => false);
+        if (existPath && !existCopiedPath) {
             const files = await readdir(filesPath);
             await mkdir(copiedFilesPath);
             files.forEach((el) => {
@@ -22,7 +27,7 @@ const copy = async () => {
             throw new Error("FS operation failed!");
         }
     } catch (e) {
-        throw new Error("FS operation failed!");
+        throw new Error(e);
     }
 };
 

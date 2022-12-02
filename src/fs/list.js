@@ -1,5 +1,4 @@
-import { readdir } from "fs/promises";
-import { existsSync } from "fs";
+import { readdir, stat } from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -9,7 +8,10 @@ const filePath = path.join(__dirname, "/files");
 
 const list = async () => {
     try {
-        if (existsSync(filePath)) {
+        const existPath = await stat(filePath)
+            .then(() => true)
+            .catch(() => false);
+        if (existPath) {
             const files = await readdir(filePath);
             console.log(files);
         } else {

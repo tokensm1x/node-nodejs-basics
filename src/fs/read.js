@@ -1,5 +1,4 @@
-import { readFile } from "fs/promises";
-import { existsSync } from "fs";
+import { readFile, stat } from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -9,14 +8,17 @@ const filePath = path.join(__dirname, "/files/fileToRead.txt");
 
 const read = async () => {
     try {
-        if (existsSync(filePath)) {
+        const existPath = await stat(filePath)
+            .then(() => true)
+            .catch(() => false);
+        if (existPath) {
             const text = await readFile(filePath, { encoding: "utf8" });
             console.log(text);
         } else {
             throw new Error("FS operation failed!");
         }
     } catch (e) {
-        throw new Error("FS operation failed!");
+        throw new Error(e);
     }
 };
 

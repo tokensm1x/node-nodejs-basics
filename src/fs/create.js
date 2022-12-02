@@ -1,5 +1,4 @@
-import { writeFile } from "fs/promises";
-import { existsSync } from "fs";
+import { writeFile, stat } from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -10,13 +9,16 @@ const text = "I am fresh and young";
 
 const create = async () => {
     try {
-        if (!existsSync(filePath)) {
+        const exist = await stat(filePath)
+            .then(() => true)
+            .catch(() => false);
+        if (!exist) {
             writeFile(filePath, text);
         } else {
             throw new Error("FS operation failed!");
         }
     } catch (e) {
-        throw new Error("FS operation failed!");
+        throw new Error(e);
     }
 };
 
