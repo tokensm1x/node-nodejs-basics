@@ -9,21 +9,23 @@ const filePath = path.join(__dirname, "/files/fileToCalculateHashFor.txt");
 
 const calculateHash = async () => {
     try {
-        const readStream = createReadStream(filePath);
-        let readContent = "";
+        const hash = createHash("sha256").update(filePath).digest("hex");
+        console.log(hash);
+        // const readStream = createReadStream(filePath);
+        // let readContent = "";
 
-        readStream.on("data", (chunk) => {
-            readContent += chunk;
-        });
+        // readStream.on("data", (chunk) => {
+        //     readContent += chunk;
+        // });
 
-        readStream.on("error", (err) => {
-            throw new Error("Calculation operation failed!");
-        });
+        // readStream.on("error", (err) => {
+        //     throw new Error("Calculation operation failed!");
+        // });
 
-        readStream.on("end", () => {
-            const hash = createHash("sha256").update(readContent).digest("hex");
-            console.log(hash);
-        });
+        // readStream.on("end", () => {
+        //     const hash = createHash("sha256").update(readContent).digest("hex");
+        //     console.log(hash);
+        // });
     } catch (e) {
         throw new Error("Calculation operation failed!");
     }
